@@ -1,39 +1,32 @@
+
 #include<iostream>
 #include<vector>
-#include<queue>using namespace std;
-class car{
+#include<queue>
+
+using namespace std;
+class Car{
     public:
-    int idx:
-    int distSq;
+     int idx;
+     int distSq;
 
     Car(int idx,int distSq){
         this->idx=idx;
         this->distSq=distSq;
     }
-    bool operator <(const car &obj) const{
+    bool operator <(const Car &obj) const{
         return this-> distSq> obj.distSq;//minheap
     }
 };
-void nearbyCars(vector<pairs<int,int>>pos,int K){
+void nearbyCars(vector<pair<int,int>>pos,int K){
     vector<Car> cars;
     
     for(int i=0;i<pos.size();i++){
-        int distSq = (pos[i].first*pos[i].first*pos[i].second*pos[i].second);
-        cars.pushback(Car(i, distSq));
+        int distSq = (pos[i].first*pos[i].first+pos[i].second*pos[i].second);
+        cars.push_back(Car(i, distSq));
     }
 
-    '''priority_queue<Car>pq;
-
-    for(int i=0;i<cars.size();i++){
-        pq.push(cars[i]);
-    }'''
-    //like this 
     priority_queue<Car> pq(cars.begin(), cars.end());
 
-
-    """for(int i=0; i<cars.size(); i++){
-        pq.push(cars[i]);
-    }"""
     for(int i=0;i<K;i++){ //sorting ke comparison me priority queue has 0(k*logn+n)
         cout<<"car"<<pq.top().idx<<endl;
         pq.pop();
