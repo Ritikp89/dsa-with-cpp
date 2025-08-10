@@ -1,0 +1,139 @@
+#include<iostream>
+#include<vector>
+#include<string>
+using namespace std;
+
+class Node{
+public:
+     string key;
+     int val;
+     Node* next;
+
+     Node(string key, int val){
+        this->key = key;
+        this->val = val;
+        next = NULL;
+     }
+};
+
+class HashTable{
+    int totSize;
+    int currSize;
+    Node** table;
+
+    int hashFunction(string key){
+        int idx = 0;
+        for(int i = 0; i < key.size(); i++){
+            idx = (idx + (key[i] * key[i])) % totSize;
+        }
+        return idx;
+    }
+
+public:
+    HashTable(int size = 5){
+        totSize = size;
+        currSize = 0;
+
+        table = new Node*[totSize];
+
+        for(int i = 0; i < totSize; i++) {
+            table[i] = NULL;
+        }
+    }
+    
+    void insert(string key, int val){
+        int idx = hashFunction(key);
+
+        Node* newNode = new Node(key, val);
+        Node* head = table[idx];
+
+        newNode->next = head;
+        table[idx] = newNode;
+        currSize++;
+    }
+    
+    void remove(string key){
+        int idx = hashFunction(key);
+        Node* head = table[idx];
+        
+        if(head == NULL) return;
+        
+        if(head->key == key){
+            table[idx] = head->next;
+            delete head;
+            currSize--;
+            return;
+        }
+        
+        Node* prev = head;
+        Node* curr = head->next;
+        
+        while(curr != NULL){
+            if(curr->key == key){
+                prev->next = curr->next;
+                delete curr;
+                currSize--;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+    
+    int search(string key){
+        int idx = hashFunction(key);
+        Node* head = table[idx];
+        
+        while(head != NULL){
+            if(head->key == key){
+                return head->val;
+            }
+            head = head->next;
+        }
+        return -1; // Key not found
+    }
+    
+    void display(){
+        cout << "\nHash Table Contents:\n";
+        for(int i = 0; i < totSize; i++){
+            cout << "Bucket " << i << ": ";
+            Node* head = table[i];
+            while(head != NULL){
+                cout << "(" << head->key << "," << head->val << ") -> ";
+                head = head->next;
+            }
+            cout << "NULL\n";
+        }
+        cout << "Current Size: " << currSize << endl;
+    }
+};
+
+int main(){
+    HashTable ht(7);
+    
+    // Test insertions
+    cout << "Testing Hash Table Implementation\n";
+    cout << "================================\n";
+    
+    ht.insert("apple", 100);
+    ht.insert("banana", 200);
+    ht.insert("orange", 300);
+    ht.insert("grape", 400);
+    
+    ht.display();
+    
+    // Test search
+    cout << "\nSearch Results:\n";
+    cout << "apple: " << ht.search("apple") << endl;
+    cout << "banana: " << ht.search("banana") << endl;
+    cout << "cherry: " << ht.search("cherry") << endl;
+    
+    // Test removal
+    cout << "\nRemoving 'banana'...\n";
+    ht.remove("banana");
+    ht.display();
+    
+    cout << "\nSearch for 'banana' after removal: " << ht.search("banana") << endl;
+    
+    return 0;
+}
